@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block title %}Monitoring{% endblock %}
+
+{% block content %}
+  <section class="panel" aria-labelledby="servers-heading">
+    <h2 id="servers-heading">Servers</h2>
+    {% if servers %}
+      <ul class="server-list">
+        {% for server in servers %}
+          <li>{{ server }}</li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p class="empty">No servers yet.</p>
+    {% endif %}
+  </section>
+
+  <section class="cards" aria-label="Resource usage">
+    {% for metric in metrics %}
+      <article class="card">
+        <h3>{{ metric.label }}</h3>
+        <p class="value">{{ metric.value }}</p>
+      </article>
+    {% endfor %}
+  </section>
+{% endblock %}
