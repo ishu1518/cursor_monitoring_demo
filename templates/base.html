@@ -15,7 +15,15 @@
         <h1>Monitoring</h1>
       </div>
     </div>
-    <p class="mode">Read only</p>
+    <div class="header-actions">
+      <p class="mode">Read only</p>
+      {% if logged_in %}
+        <form method="post" action="{{ url_for('logout') }}">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+          <button type="submit" class="text-button">Log out</button>
+        </form>
+      {% endif %}
+    </div>
   </header>
   <main>
     {% block content %}{% endblock %}

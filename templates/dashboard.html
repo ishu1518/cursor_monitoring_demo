@@ -3,25 +3,74 @@
 {% block title %}Monitoring{% endblock %}
 
 {% block content %}
+  <section class="panel" aria-labelledby="usage-heading">
+    <h2 id="usage-heading">{{ card_title }}</h2>
+    <p class="empty">Live usage for this computer. Other computers are read over SSH.</p>
+    <div class="cards" aria-label="Resource usage" {% if metrics_url %}data-metrics-url="{{ metrics_url }}"{% endif %}>
+      <article class="card">
+        <h3>CPU</h3>
+        <p class="value" id="metric-cpu">{{ cpu }}</p>
+      </article>
+      <article class="card">
+        <h3>Memory</h3>
+        <p class="value" id="metric-memory">{{ memory }}</p>
+      </article>
+      <article class="card">
+        <h3>Network</h3>
+        <p class="value" id="metric-network">{{ network }}</p>
+      </article>
+      <article class="card">
+        <h3>Ports</h3>
+        <p class="value" id="metric-ports">{{ ports }}</p>
+      </article>
+    </div>
+  </section>
+
   <section class="panel" aria-labelledby="servers-heading">
     <h2 id="servers-heading">Servers</h2>
     {% if servers %}
       <ul class="server-list">
         {% for server in servers %}
-          <li>{{ server }}</li>
+          <li data-server-metrics="{{ url_for('server_metrics', server_id=server.id) }}">
+            <span>{{ server.name }}</span>
+            <span>{{ server.host }}</span>
+            <span>port {{ server.ssh_port }}</span>
+            <span class="server-status empty">{% if server.local %}Live{% else %}Checking{% endif %}</span>
+          </li>
         {% endfor %}
       </ul>
     {% else %}
       <p class="empty">No servers yet.</p>
     {% endif %}
-  </section>
 
-  <section class="cards" aria-label="Resource usage">
-    {% for metric in metrics %}
-      <article class="card">
-        <h3>{{ metric.label }}</h3>
-        <p class="value">{{ metric.value }}</p>
-      </article>
-    {% endfor %}
+    {% if errors %}
+      <ul class="errors">
+        {% for error in errors %}
+          <li>{{ error }}</li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+
+    <form method="post" action="{{ url_for('add_server') }}" class="server-form">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+      <label>
+        Display name
+        <input name="name" value="{{ form_name }}" maxlength="64" required>
+      </label>
+      <label>
+        Host
+        <input name="host" value="{{ form_host }}" required>
+      </label>
+      <label>
+        SSH user
+        <input name="ssh_user" value="{{ form_user }}" autocomplete="off">
+      </label>
+      <label>
+        SSH port
+        <input name="ssh_port" value="{{ form_port }}" inputmode="numeric" required>
+      </label>
+      <button type="submit">Add server</button>
+    </form>
   </section>
+  <script src="{{ url_for('static', filename='metrics.js') }}"></script>
 {% endblock %}

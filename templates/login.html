@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block title %}Sign in · Monitoring{% endblock %}
+
+{% block content %}
+  <section class="panel login-panel">
+    <h2>Sign in</h2>
+    <p class="empty">Username is admin. The password is checked against the local hash.</p>
+    {% if error %}
+      <p class="error" role="alert">{{ error }}</p>
+    {% endif %}
+    <form method="post" action="{{ url_for('login') }}" class="login-form">
+      <label>
+        Username
+        <input name="username" autocomplete="username" required>
+      </label>
+      <label>
+        Password
+        <input name="password" type="password" autocomplete="current-password" required>
+      </label>
+      <button type="submit">Sign in</button>
+    </form>
+  </section>
+{% endblock %}
